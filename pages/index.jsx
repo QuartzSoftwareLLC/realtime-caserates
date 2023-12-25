@@ -27,6 +27,7 @@ export default function Page() {
 
   return (
     <div>
+      <h1>COVID 19 Realtime Data</h1>
       {data && (
         <Table>
           <thead>
