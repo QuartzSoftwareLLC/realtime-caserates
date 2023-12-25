@@ -8,6 +8,7 @@ tasks:
     cmds: 
       - yarn build
       - touch docs/.nojekyll
+      - echo "covid.quartzsoftware.com" > docs/CNAME
   run:
     cmds:
       - docker run -p 81:80 $IMAGE
