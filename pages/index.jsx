@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import axios from "axios";
 import React from "react";
-// import { CsvToHtmlTable } from "react-csv-to-table";
 import Papa from "papaparse";
 
 const Table = styled.table`
