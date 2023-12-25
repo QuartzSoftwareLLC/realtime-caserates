@@ -16,7 +16,11 @@ export default function Page() {
   const [data, setData] = React.useState("");
   React.useEffect(() => {
     axios
-      .get("http://quartzdata.s3.amazonaws.com/datasets/avg-final.csv")
+    // http if http otherwise https
+      .get(
+        window.location.protocol === "http:"
+          ? "http://quartzdata.s3.amazonaws.com/datasets/avg-final.csv"
+          : "https://quartzdata.s3.amazonaws.com/datasets/avg-final.csv")
       // .get("http://quartzdata.s3.amazonaws.com/stats/aggregate_annual_rate_latest.json")
       .then((res) => setData(Papa.parse(res.data.trim()).data));
   }, []);
