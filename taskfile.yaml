@@ -1,0 +1,13 @@
+version: '3'
+
+env:
+  IMAGE: registry.10.0.0.1.nip.io/realtime-caserates
+
+tasks:
+  build:
+    cmds: 
+      - yarn build
+      - docker build . -t $IMAGE
+  run:
+    cmds:
+      - docker run -p 81:80 $IMAGE
