@@ -7,7 +7,7 @@ tasks:
   build:
     cmds: 
       - yarn build
-      - docker build . -t $IMAGE
+      - touch docs/.nojekyll
   run:
     cmds:
       - docker run -p 81:80 $IMAGE
