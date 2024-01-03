@@ -2,6 +2,54 @@ import styled from "styled-components";
 import axios from "axios";
 import React from "react";
 import Papa from "papaparse";
+import dynamic from "next/dynamic";
+import { zip } from "lodash";
+
+const PlotParent = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
+const Plot = dynamic(import("react-plotly.js"), {
+  ssr: false,
+});
+const Figure = () => {
+  const data = useData("trend-hospitalizations");
+  let formatted_data;
+  if (data) {
+    formatted_data = zip(...data).reduce(
+      (acc, x) => ({ ...acc, [x[0]]: x.slice(2) }),
+      {}
+    );
+  }
+
+  return data ? (
+    <PlotParent>
+      <Plot
+        data={[
+          {
+            x: formatted_data["week_ending_date"],
+            y: formatted_data["rate"],
+            type: "scatter",
+            mode: "lines+markers",
+            marker: { color: "black" },
+          },
+        ]}
+        layout={{
+          width: "100%",
+          height: "100%",
+          title: "Hospitalization Trends",
+          xaxis: { title: "Week" },
+          yaxis: { title: "Hospitalization Rate" },
+        }}
+      />
+    </PlotParent>
+  ) : (
+    <p>Loading...</p>
+  );
+};
 
 const Table = styled.table`
   border-collapse: collapse;
@@ -12,18 +60,28 @@ const Table = styled.table`
   }
 `;
 
-export default function Page() {
+const useData = (key) => {
   const [data, setData] = React.useState("");
+
   React.useEffect(() => {
     axios
-    // http if http otherwise https
+      // http if http otherwise https
       .get(
         window.location.protocol === "http:"
-          ? "http://quartzdata.s3.amazonaws.com/datasets/avg-final.csv"
-          : "https://quartzdata.s3.amazonaws.com/datasets/avg-final.csv")
+          ? `http://quartzdata.s3.amazonaws.com/datasets/${key}.csv`
+          : `https://quartzdata.s3.amazonaws.com/datasets/${key}.csv`
+      )
       // .get("http://quartzdata.s3.amazonaws.com/stats/aggregate_annual_rate_latest.json")
-      .then((res) => setData(Papa.parse(res.data.trim()).data));
+      .then((res) =>
+        setData(Papa.parse(res.data.trim(), { delimiter: "," }).data)
+      );
   }, []);
+
+  return data;
+};
+
+export default function Page() {
+  const data = useData("avg-final");
 
   return (
     <div>
@@ -40,14 +98,21 @@ export default function Page() {
           <tbody>
             {data.slice(1, data.length).map((x) => (
               <tr>
-                {x.map((y) => (
-                  <td>{y?.toLocaleString()}</td>
-                ))}
+                {x.map((y) => {
+                  const parsed = parseFloat(y);
+
+                  return parsed.toString() == "NaN" ? (
+                    <td>{y}</td>
+                  ) : (
+                    <td>{parsed.toLocaleString("en-US")}</td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
         </Table>
       )}
+      <Figure />
     </div>
   );
 }
