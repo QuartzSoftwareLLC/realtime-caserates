@@ -1,0 +1,6 @@
+tasks:
+  build:
+    cmd: |
+     yarn build
+     touch docs/.nojekyll
+     echo "covid.quartzsoftware.com" > docs/CNAME
