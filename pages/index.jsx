@@ -12,6 +12,11 @@ const PlotParent = styled.div`
   justify-content: center;
 `;
 
+const NewestData = styled.p`
+  margin: 0;
+  margin-left: 1rem;
+`;
+
 const Plot = dynamic(import("react-plotly.js"), {
   ssr: false,
 });
@@ -82,6 +87,7 @@ const useData = (key) => {
 
 export default function Page() {
   const data = useData("avg-final");
+  const dates = useData("avg-final-dates");
 
   return (
     <div>
@@ -101,7 +107,7 @@ export default function Page() {
                 {x.map((y) => {
                   const parsed = parseFloat(y);
 
-                  return parsed.toString() == "NaN" ? (
+                  return parsed.toString() == "NaN" || y.includes("%") ? (
                     <td>{y}</td>
                   ) : (
                     <td>{parsed.toLocaleString("en-US")}</td>
@@ -112,6 +118,13 @@ export default function Page() {
           </tbody>
         </Table>
       )}
+      <ul>
+        {zip(...dates).map(([x, y]) => (
+          <li>
+            {x} {y}
+          </li>
+        ))}
+      </ul>
       <Figure />
     </div>
   );
