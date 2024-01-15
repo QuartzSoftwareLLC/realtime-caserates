@@ -63,6 +63,9 @@ const Table = styled.table`
     border: 1px solid black;
     padding: 0.5rem;
   }
+  .bold {
+    color: red;
+  }
 `;
 
 const useData = (key) => {
@@ -107,8 +110,10 @@ export default function Page() {
                 {x.map((y) => {
                   const parsed = parseFloat(y);
 
-                  return parsed.toString() == "NaN" || y.includes("%") ? (
+                  return parsed.toString() == "NaN" ? (
                     <td>{y}</td>
+                  ) : y.includes("%") ? (
+                    <td className="bold">{y}</td>
                   ) : (
                     <td>{parsed.toLocaleString("en-US")}</td>
                   );
