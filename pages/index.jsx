@@ -25,7 +25,7 @@ const Figure = () => {
   let formatted_data;
   if (data) {
     formatted_data = zip(...data).reduce(
-      (acc, x) => ({ ...acc, [x[0]]: x.slice(2) }),
+      (acc, x) => ({ ...acc, [x[0]]: x.slice(1) }),
       {}
     );
   }
