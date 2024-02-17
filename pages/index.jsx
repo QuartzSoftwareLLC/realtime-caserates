@@ -10,6 +10,16 @@ const PlotParent = styled.div`
   height: 100%;
   display: flex;
   justify-content: center;
+  /* align-items: center; */
+`;
+
+const HospitalizationWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  * {
+    flex: 1;
+  }
 `;
 
 const NewestData = styled.p`
@@ -24,7 +34,7 @@ const Plot = dynamic(import("react-plotly.js"), {
   ssr: false,
 });
 const Figure = () => {
-  const data = useData("trend-hospitalizations");
+  const data = useData("trend-hospitalizations.csv");
   let formatted_data;
   if (data) {
     formatted_data = zip(...data).reduce(
@@ -124,17 +134,19 @@ const Table = styled.table`
   }
 `;
 
+const get_quartz_asset = (key) => {
+  return axios.get(
+    window.location.protocol === "http:"
+      ? `http://quartzdata.s3.amazonaws.com/datasets/${key}`
+      : `https://quartzdata.s3.amazonaws.com/datasets/${key}`
+  );
+};
+
 const useData = (key) => {
   const [data, setData] = React.useState("");
 
   React.useEffect(() => {
-    axios
-      // http if http otherwise https
-      .get(
-        window.location.protocol === "http:"
-          ? `http://quartzdata.s3.amazonaws.com/datasets/${key}.csv`
-          : `https://quartzdata.s3.amazonaws.com/datasets/${key}.csv`
-      )
+    get_quartz_asset(key)
       // .get("http://quartzdata.s3.amazonaws.com/stats/aggregate_annual_rate_latest.json")
       .then((res) =>
         setData(Papa.parse(res.data.trim(), { delimiter: "," }).data)
@@ -144,9 +156,25 @@ const useData = (key) => {
   return data;
 };
 
+function Dates() {
+  const [dates, setDates] = React.useState({});
+  React.useEffect(() => {
+    get_quartz_asset("covid-dates.json").then((res) => setDates(res.data));
+  }, []);
+  return (
+    <>
+      {Object.entries(dates).map(([k, v]) => (
+        <p>
+          {k}: {v}
+        </p>
+      ))}
+    </>
+  );
+}
+
 export default function Page() {
-  const data = useData("avg-final");
-  const dates = useData("avg-final-dates");
+  const data = useData("covid.csv");
+  const hospitalizations = useData("hospitalizations-by-age.csv");
 
   return (
     <div>
@@ -181,14 +209,30 @@ export default function Page() {
           </tbody>
         </Table>
       )}
-      <ul>
-        {zip(...dates).map(([x, y]) => (
-          <li key={x}>
-            {x} {y}
-          </li>
-        ))}
-      </ul>
-      <Figure />
+      <HospitalizationWrapper>
+        <Figure />
+        {hospitalizations && (
+          <Table>
+            <thead>
+              <tr>
+                {hospitalizations[0].map((x) => (
+                  <th key={x}>{x}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {hospitalizations.slice(1, hospitalizations.length).map((x) => (
+                <tr key={x}>
+                  {x.map((y) => {
+                    return <td key={y}>{y}</td>;
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
+      </HospitalizationWrapper>
+      <Dates />
     </div>
   );
 }

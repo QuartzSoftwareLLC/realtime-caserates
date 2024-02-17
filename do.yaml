@@ -4,3 +4,5 @@ tasks:
      yarn build
      touch docs/.nojekyll
      echo "covid.quartzsoftware.com" > docs/CNAME
+  deploy: 
+    cmd: aws s3 cp --recursive docs s3://realtime-covid
