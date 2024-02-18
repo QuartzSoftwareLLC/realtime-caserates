@@ -5,17 +5,90 @@ import Papa from "papaparse";
 import dynamic from "next/dynamic";
 import { zip } from "lodash";
 
+const niceBlue = '#475C7A'
+const niceRed = '#D8737F'
+
 const PlotParent = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
-  /* align-items: center; */
 `;
+
+const Container = styled.div`
+  padding: 1rem;
+  // background-color: #F2F3F4;
+  font-family: Arial;
+  h1, h2 {
+    color: ${niceBlue};
+  };
+  .styled-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    max-width: 100%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+  }
+  .bold {
+    color: ${niceRed}
+  }
+
+  .table-wrapper {
+    max-width:100%;
+    overflow-x:auto
+  }
+
+  .styled-table thead tr {
+    background-color: ${niceBlue};
+    color: #ffffff;
+    text-align: left;
+  }
+  .styled-table th,
+  .styled-table td {
+      padding: 12px 15px;
+  }
+  .styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+  }
+
+  .styled-table tbody tr:nth-of-type(even) {
+      background-color: #f3f3f3;
+  }
+
+  .styled-table tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+  }
+
+  .styled-table td:first-child, th:first-child {
+    border-left: none;
+  }
+
+  .data-wrapper {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .reference {
+    color: ${niceBlue}
+  }
+
+  .card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 5px; /* 5px rounded corners */
+  }
+`
 
 const HospitalizationWrapper = styled.div`
   display: flex;
   align-items: center;
+  flex-direction: column;
+  justify-content: center;
   flex-wrap: wrap;
   * {
     flex: 1;
@@ -92,7 +165,7 @@ const Figure = () => {
           },
         ]}
         layout={{
-          width: "100%",
+          autosize: true,
           shapes: [
             ...timeData.map((x, i) => ({
               type: "rect",
@@ -121,18 +194,6 @@ const Figure = () => {
     <p>Loading...</p>
   );
 };
-
-const Table = styled.table`
-  border-collapse: collapse;
-  td,
-  th {
-    border: 1px solid black;
-    padding: 0.5rem;
-  }
-  .bold {
-    color: red;
-  }
-`;
 
 const get_quartz_asset = (key) => {
   return axios.get(
@@ -163,10 +224,11 @@ function Dates() {
   }, []);
   return (
     <>
+
       {Object.entries(dates).map(([k, v]) => (
-        <p>
+        <ul class="reference">
           {k}: {v}
-        </p>
+        </ul>
       ))}
     </>
   );
@@ -177,62 +239,72 @@ export default function Page() {
   const hospitalizations = useData("hospitalizations-by-age.csv");
 
   return (
-    <div>
+    <Container>
       <h1>COVID 19 Realtime Data</h1>
-      {data && (
-        <Table>
-          <thead>
-            <tr>
-              {data[0].map((x) => (
-                <th key={x}>{x}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.slice(1, data.length).map((x) => (
-              <tr key={x}>
-                {x.map((y) => {
-                  const parsed = parseFloat(y);
-
-                  return parsed.toString() == "NaN" ? (
-                    <td key={y}>{y}</td>
-                  ) : y.includes("%") ? (
-                    <td key={y} className="bold">
-                      {y}
-                    </td>
-                  ) : (
-                    <td key={y}>{parsed.toLocaleString("en-US")}</td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      )}
-      <HospitalizationWrapper>
-        <Figure />
-        {hospitalizations && (
-          <Table>
-            <thead>
-              <tr>
-                {hospitalizations[0].map((x) => (
-                  <th key={x}>{x}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {hospitalizations.slice(1, hospitalizations.length).map((x) => (
-                <tr key={x}>
-                  {x.map((y) => {
-                    return <td key={y}>{y}</td>;
-                  })}
+      <div class="data-wrapper">
+        {data && (
+          <div class="table-wrapper">
+            <table class="styled-table">
+              <thead>
+                <tr>
+                  {data[0].map((x) => (
+                    <th key={x}>{x}</th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {data.slice(1, data.length).map((x) => (
+                  <tr key={x}>
+                    {x.map((y) => {
+                      const parsed = parseFloat(y);
+
+                      return parsed.toString() == "NaN" ? (
+                        <td key={y}>{y}</td>
+                      ) : y.includes("%") ? (
+                        <td key={y} className="bold">
+                          {y}
+                        </td>
+                      ) : (
+                        <td key={y}>{parsed.toLocaleString("en-US")}</td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
-      </HospitalizationWrapper>
-      <Dates />
-    </div>
+        <h2>Hospitalization Data</h2>
+        <HospitalizationWrapper>
+          <div class="card">
+            <Figure />
+          </div>
+          {hospitalizations && (
+            <div class="table-wrapper">
+              <table class="styled-table">
+                <thead>
+                  <tr>
+                    {hospitalizations[0].map((x) => (
+                      <th key={x}>{x}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {hospitalizations.slice(1, hospitalizations.length).map((x) => (
+                    <tr key={x}>
+                      {x.map((y) => {
+                        return <td key={y}>{y}</td>;
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </HospitalizationWrapper>
+        <h2>Data Info</h2>
+        <Dates />
+      </div>
+    </Container>
   );
 }
