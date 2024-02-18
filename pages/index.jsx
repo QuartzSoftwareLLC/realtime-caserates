@@ -5,8 +5,8 @@ import Papa from "papaparse";
 import dynamic from "next/dynamic";
 import { zip } from "lodash";
 
-const niceBlue = '#475C7A'
-const niceRed = '#D8737F'
+const niceBlue = "#475C7A";
+const niceRed = "#D8737F";
 
 const PlotParent = styled.div`
   width: 100%;
@@ -19,9 +19,10 @@ const Container = styled.div`
   padding: 1rem;
   // background-color: #F2F3F4;
   font-family: Arial;
-  h1, h2 {
+  h1,
+  h2 {
     color: ${niceBlue};
-  };
+  }
   .styled-table {
     border-collapse: collapse;
     margin: 25px 0;
@@ -29,16 +30,16 @@ const Container = styled.div`
     font-family: sans-serif;
     min-width: 400px;
     max-width: 100%;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
   }
   .bold {
-    color: ${niceRed}
+    color: ${niceRed};
   }
 
   .table-wrapper {
-    max-width:100%;
-    overflow-x:auto
+    max-width: 100%;
+    overflow-x: auto;
   }
 
   .styled-table thead tr {
@@ -48,14 +49,14 @@ const Container = styled.div`
   }
   .styled-table th,
   .styled-table td {
-      padding: 12px 15px;
+    padding: 12px 15px;
   }
   .styled-table tbody tr {
     border-bottom: 1px solid #dddddd;
   }
 
   .styled-table tbody tr:nth-of-type(even) {
-      background-color: #f3f3f3;
+    background-color: #f3f3f3;
   }
 
   .styled-table tbody tr.active-row {
@@ -63,7 +64,8 @@ const Container = styled.div`
     color: #009879;
   }
 
-  .styled-table td:first-child, th:first-child {
+  .styled-table td:first-child,
+  th:first-child {
     border-left: none;
   }
 
@@ -74,15 +76,15 @@ const Container = styled.div`
   }
 
   .reference {
-    color: ${niceBlue}
+    color: ${niceBlue};
   }
 
   .card {
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
     border-radius: 5px; /* 5px rounded corners */
   }
-`
+`;
 
 const HospitalizationWrapper = styled.div`
   display: flex;
@@ -224,7 +226,6 @@ function Dates() {
   }, []);
   return (
     <>
-
       {Object.entries(dates).map(([k, v]) => (
         <ul class="reference">
           {k}: {v}
@@ -241,6 +242,12 @@ export default function Page() {
   return (
     <Container>
       <h1>COVID 19 Realtime Data</h1>
+      <p>
+        This real-time dashboard provides insights into current trends of COVID
+        19 based on metrics including testing, hospitalizations, and deaths. The
+        data below is refreshed daily from a variety of CDC provided sources.
+        See <a href="#data-info">Data Info</a> below for more information.
+      </p>
       <div class="data-wrapper">
         {data && (
           <div class="table-wrapper">
@@ -290,19 +297,21 @@ export default function Page() {
                   </tr>
                 </thead>
                 <tbody>
-                  {hospitalizations.slice(1, hospitalizations.length).map((x) => (
-                    <tr key={x}>
-                      {x.map((y) => {
-                        return <td key={y}>{y}</td>;
-                      })}
-                    </tr>
-                  ))}
+                  {hospitalizations
+                    .slice(1, hospitalizations.length)
+                    .map((x) => (
+                      <tr key={x}>
+                        {x.map((y) => {
+                          return <td key={y}>{y}</td>;
+                        })}
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
           )}
         </HospitalizationWrapper>
-        <h2>Data Info</h2>
+        <h2 id="data-info">Data Info</h2>
         <Dates />
       </div>
     </Container>
