@@ -283,9 +283,7 @@ export default function Page() {
         )}
         <h2>Hospitalization Data</h2>
         <HospitalizationWrapper>
-          <div class="card">
-            <Figure />
-          </div>
+          <Figure />
           {hospitalizations && (
             <div class="table-wrapper">
               <table class="styled-table">
