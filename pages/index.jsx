@@ -281,6 +281,12 @@ export default function Page() {
             </table>
           </div>
         )}
+        <ul>
+        <li>Prosser 2023 cases are annualized based on data from December 2022 through May 2023</li>
+        <li>Prosser 2023 hospitalizations and deaths are annualized based on data from October 2022 through March 2023</li>
+        <li>Prosser 2024 cases, hospitalizations and deaths are annualized based on data from April 2023 through September 2023</li>
+     
+        </ul>
         <h2>Hospitalization Data</h2>
         <HospitalizationWrapper>
           <Figure />
