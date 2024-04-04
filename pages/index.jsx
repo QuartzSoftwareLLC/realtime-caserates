@@ -4,6 +4,7 @@ import React from "react";
 import Papa from "papaparse";
 import dynamic from "next/dynamic";
 import { zip } from "lodash";
+import Head from 'next/head'
 
 const niceBlue = "#475C7A";
 const niceRed = "#D8737F";
@@ -241,6 +242,13 @@ export default function Page() {
 
   return (
     <Container>
+      <Head>
+        <meta http-equiv="cache-control" content="max-age=0" />
+        <meta http-equiv="cache-control" content="no-cache" />
+        <meta http-equiv="expires" content="0" />
+        <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+        <meta http-equiv="pragma" content="no-cache" />
+      </Head>
       <h1>COVID 19 Realtime Data</h1>
       <p>
         This real-time dashboard provides insights into current trends of COVID
@@ -282,10 +290,18 @@ export default function Page() {
           </div>
         )}
         <ul>
-        <li>Prosser 2023 cases are annualized based on data from December 2022 through May 2023</li>
-        <li>Prosser 2023 hospitalizations and deaths are annualized based on data from October 2022 through March 2023</li>
-        <li>Prosser 2024 cases, hospitalizations and deaths are annualized based on data from April 2023 through September 2023</li>
-     
+          <li>
+            Prosser 2023 cases are annualized based on data from December 2022
+            through May 2023
+          </li>
+          <li>
+            Prosser 2023 hospitalizations and deaths are annualized based on
+            data from October 2022 through March 2023
+          </li>
+          <li>
+            Prosser 2024 cases, hospitalizations and deaths are annualized based
+            on data from April 2023 through September 2023
+          </li>
         </ul>
         <h2>Hospitalization Data</h2>
         <HospitalizationWrapper>
