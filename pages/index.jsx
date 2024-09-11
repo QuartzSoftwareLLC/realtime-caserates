@@ -4,7 +4,7 @@ import React from "react";
 import Papa from "papaparse";
 import dynamic from "next/dynamic";
 import { zip } from "lodash";
-import Head from 'next/head'
+import Head from "next/head";
 
 const niceBlue = "#475C7A";
 const niceRed = "#D8737F";
@@ -119,12 +119,12 @@ const Figure = () => {
     );
   }
   const timeData = [
-    ...[2020,2021,2022,2023].map(x=>({
+    ...[2020, 2021, 2022, 2023].map((x) => ({
       start: `${x}-10-01`,
       label: `${x}-12-10`,
-      end: `${x+1}-09-30`,
+      end: `${x + 1}-09-30`,
       fillcolor: prosserFill,
-      text: `{x} Season`,
+      text: `${x} Season`,
     })),
     {
       end: formatted_data?.["week_ending_date"][0],
@@ -276,18 +276,7 @@ export default function Page() {
           </div>
         )}
         <ul>
-          <li>
-            Prosser 2023 cases are annualized based on data from December 2022
-            through May 2023
-          </li>
-          <li>
-            Prosser 2023 hospitalizations and deaths are annualized based on
-            data from October 2022 through March 2023
-          </li>
-          <li>
-            Prosser 2024 cases, hospitalizations and deaths are annualized based
-            on data from April 2023 through September 2023
-          </li>
+          <li>Seasons are from October 1st to September 30th</li>
         </ul>
         <h2>Hospitalization Data</h2>
         <HospitalizationWrapper>
