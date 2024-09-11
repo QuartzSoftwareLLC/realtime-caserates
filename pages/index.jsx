@@ -118,27 +118,13 @@ const Figure = () => {
     );
   }
   const timeData = [
-    {
-      start: "2022-12-03",
-      label: "2022-12-10",
-      end: "2023-05-27",
+    ...[2020,2021,2022,2023].map(x=>({
+      start: `${x}-10-01`,
+      label: `${x}-12-10`,
+      end: `${x+1}-09-30`,
       fillcolor: prosserFill,
-      text: "Prosser",
-    },
-    {
-      start: "2021-10-02",
-      label: "2021-10-09",
-      end: "2022-09-24",
-      text: "High Scenario",
-      fillcolor: highFill,
-    },
-    {
-      start: "2022-04-02",
-      label: "2022-04-09",
-      end: "2023-03-25",
-      text: "Low Scenario",
-      fillcolor: lowFill,
-    },
+      text: `{x} Season`,
+    })),
     {
       end: formatted_data?.["week_ending_date"][0],
       label: formatted_data?.["week_ending_date"][50],
