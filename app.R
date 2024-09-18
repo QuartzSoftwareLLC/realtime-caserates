@@ -127,7 +127,8 @@ server <- function(input, output, session) {
                 scrollX = TRUE,
                 paging = FALSE,
                 searching = FALSE,
-                info = FALSE
+                info = FALSE,
+                rownames = FALSE  # This line removes the row numbers
               ), 
               class = 'styled-table')
   })
@@ -143,7 +144,8 @@ server <- function(input, output, session) {
                 scrollX = TRUE,
                 paging = FALSE,
                 searching = FALSE,
-                info = FALSE
+                info = FALSE,
+                rownames = FALSE  # This line removes the row numbers
               ), 
               class = 'styled-table')
   })
