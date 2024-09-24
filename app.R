@@ -81,6 +81,7 @@ ui <- fluidPage(
         flex-direction: column;
         justify-content: center;
         flex-wrap: wrap;
+        gap: 2rem;
       }
     "))
   ),
@@ -128,7 +129,8 @@ server <- function(input, output, session) {
                 paging = FALSE,
                 searching = FALSE,
                 info = FALSE,
-                rownames = FALSE  # This line removes the row numbers
+                rownames = FALSE,  # This line removes the row numbers
+                columnDefs = list(list(targets = "_all", className = 'dt-left'))
               ), 
               class = 'styled-table')
   })
