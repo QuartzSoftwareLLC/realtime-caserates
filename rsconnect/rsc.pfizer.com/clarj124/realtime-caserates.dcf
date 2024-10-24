@@ -5,6 +5,6 @@ account: clarj124
 server: rsc.pfizer.com
 hostUrl: https://rsc.pfizer.com/__api__
 appId: 9972
-bundleId: 62392
+bundleId: 64287
 url: https://rsc.pfizer.com/realtime-covid/
 version: 1

@@ -10,6 +10,68 @@ library(dplyr)
 library(lubridate)
 library(DT)
 library(jsonlite)
+library(echarts4r)
+
+plot_vaccine_data <- function(pathogen, group_by_column, start_week = NULL) {
+  raw_data <- read.csv('seasonal_vaccination_data.csv') |> tibble()
+
+  cleaned_data <- raw_data %>%
+    filter(vaccine == pathogen) %>%
+    mutate(
+     # Extract year, month, day, and week number from the 'week_ending' column
+      year = year(week_ending),
+      month = month(week_ending),
+      day = day(week_ending),
+      week_number = week(week_ending),
+      estimate = estimate / 100
+    )
+
+  # Find the first week after June to determine the start of the vaccination season
+  if (is.null(start_week)) {
+    start_week <- cleaned_data %>%
+      filter(month > 6) %>%
+      arrange(week_number) %>%
+      slice(1) %>%
+      pull(week_number)
+  }
+
+  # Calculate the week of the season, adjusting for the season start
+  cleaned_data <- cleaned_data %>%
+    mutate(
+      week_of_season = ifelse(week_number >= start_week, 
+                              week_number - start_week + 1, 
+                              week_number + (52 - start_week) + 1)
+    )
+
+  grouped_data <- cleaned_data %>% 
+    group_by(!!sym(group_by_column)) %>%
+    arrange(week_of_season) %>% 
+    select(week_ending, estimate, !!sym(group_by_column), week_of_season)
+
+
+  chart <- grouped_data %>% 
+    e_charts(x = week_ending) %>%
+    e_line(estimate) %>%
+    e_title(sprintf("%s Vaccination Rates by Season", pathogen)) %>%
+    e_legend(orient = "vertical", right = "2%", top = "middle") %>%
+    e_axis_labels(x = "Date", y = "Percent of Population") %>%
+    e_y_axis(
+      formatter = e_axis_formatter("percent")
+    ) %>%
+    e_x_axis(
+      axisLabel = list(
+        rotate = 45,
+        # Custom JavaScript formatter to display dates as MM-DD
+        formatter = htmlwidgets::JS("function(value, index, values) {
+          var date = new Date(value);
+          return (date.getMonth() + 1).toString().padStart(2, '0') + '-' + 
+                 date.getDate().toString().padStart(2, '0');
+        }")
+      )
+    )
+  
+  return(chart)
+}
 
 # Define UI
 ui <- fluidPage(
@@ -102,6 +164,9 @@ ui <- fluidPage(
               DTOutput("hospitalizations_table")
           )
       ),
+      h2("Vaccination Data"),
+      echarts4rOutput("vaccination_covid_plot"),
+      echarts4rOutput("vaccination_flu_plot"),
       h2(id="data-info", "Data Info"),
       uiOutput("dates_info")
   )
@@ -261,6 +326,14 @@ server <- function(input, output, session) {
     )
     
     p
+  })
+
+  output$vaccination_covid_plot <- renderEcharts4r({
+    plot_vaccine_data("COVID", "covid_season", 34)
+  })
+
+  output$vaccination_flu_plot <- renderEcharts4r({
+    plot_vaccine_data("FLU", "influenza_season", 34)
   })
   
   # Load dates info
